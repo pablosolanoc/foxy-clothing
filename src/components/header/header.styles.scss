@@ -1,0 +1,40 @@
+.header {
+  height: 70px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+
+  .logo-container {
+    height: 100%;
+    width: 70px;
+    padding: 25px;
+  }
+
+  .options {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .option {
+      padding: 10px 15px;
+      transition-property: background-color;
+      transition-duration: 0.5s;
+      transition-timing-function: ease-in-out;
+    }
+
+    .option:hover {
+        background-color: rgba(0,0,0, 0.1);
+    }
+
+    .option:active {
+        background-color: rgba(0,0,0, 0.4);
+        transition-property: background-color;
+        transition-duration: 0.3s;
+        transition-timing-function: ease-in-out;
+    }
+
+  }
+}
