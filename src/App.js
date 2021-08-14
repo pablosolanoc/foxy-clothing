@@ -14,6 +14,7 @@ import { setCurrentUser } from './redux/user/user.actions';
 import {selectCurrentUser} from './redux/user/user.selectors';
 import {createStructuredSelector} from 'reselect';
 
+
 // const HatsPage = () => (
 //   <div>
 //     <h1>HATS PAGE</h1>
