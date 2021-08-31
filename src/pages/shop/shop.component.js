@@ -1,16 +1,68 @@
 import React, {Component} from 'react';
 
 import {Route} from 'react-router-dom';
+import {connect} from 'react-redux';
 
 import CollectionsOverview from '../../components/collections-overview/collections-overview.component';
 import CollectionPage from '../collection/collection.component';
 
-const ShopPage = ({ match }) => (
-    <div className='shop-page'>
-        <Route exact path={`${match.path}`} component={CollectionsOverview} />
-        <Route path={`${match.path}/:collection_id`} component={CollectionPage} />
-    </div>
-);
+import {firestore, convertCollectionsSnapshotToMap} from '../../firebase/firebase.utils';
+import { updateCollections } from '../../redux/shop/shop.actions';
 
-export default ShopPage;
+import WithSpinner from '../../components/withSpinner/with-spinner.component';
+
+const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
+const CollectionPageWithSpinner = WithSpinner(CollectionPage);
+
+class ShopPage extends React.Component {
+    state = {
+        loading: true
+    }
+    unsubscribeFromSnapshot = null;
+
+    componentDidMount(){
+        const {updateCollections} = this.props;
+        const collectionRef = firestore.collection('collections');
+        
+        collectionRef.get().then(snapshot => {
+            const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
+            console.log(collectionsMap);
+            updateCollections(collectionsMap);
+            this.setState({loading: false});
+        });
+        
+        // Fetching the firesotre of our databse
+        // fetch('https://firestore.googleapis.com/v1/projects/foxy-db-87eba/databases/(default)/documents/collections')
+        // .then(response => response.json())
+        // .then(collections => console.log(collections)); //Here we should deal with the response and load it as the collectionMap
+
+
+
+        // This uses the observable pattern
+        // collectionRef.onSnapshot(async snapshot => {
+        //     const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
+        //     console.log(collectionsMap);
+        //     updateCollections(collectionsMap);
+        //     this.setState({loading: false});
+        // })
+    }
+
+    render(){
+        const {match} = this.props;
+        const {loading} = this.state;
+        
+        return(
+            <div className='shop-page'>
+                <Route exact path={`${match.path}`} render={(props) => <CollectionsOverviewWithSpinner isLoading={loading} {...props}/> }/>
+                <Route path={`${match.path}/:collection_id`} render={(props) => <CollectionPageWithSpinner isLoading={loading} {...props}/>} />
+            </div>
+        )
+    }
+}
+
+const mapDispatchToProps = dispatch => ({
+    updateCollections:  collectionsMap => dispatch(updateCollections(collectionsMap))
+});
+
+export default connect(null, mapDispatchToProps)(ShopPage);
 

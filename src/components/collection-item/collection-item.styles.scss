@@ -2,10 +2,10 @@
   width: 19vw;
   display: flex;
   flex-direction: column;
-  height: 350px;
+  // height: 350px;
   align-items: center;
   position: relative;
-  overflow: hidden;
+  // overflow: hidden;
 
   .image {
     width: 100%;
@@ -14,13 +14,15 @@
     // background-position: center;
     margin-bottom: 5px;
     
+    
   }
 
   .custom-button{
     width: 80%;
     // opacity: 0.9; 
     position: absolute;
-    top: 255px;
+    // background-color: red;
+    top: 15px;
     display:none;
   }
 
@@ -30,7 +32,7 @@
     }
 
     .custom-button{
-      opacity: 0.9;
+      opacity: 0.1;
       display: flex;
     }
   }
