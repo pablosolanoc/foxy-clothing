@@ -6,12 +6,13 @@ import { selectCollection } from '../../redux/shop/shop.selectors';
 
 import './collection.styles.scss';
 
-const CollectionPage = ({ collection, match, location, history}) => {
+const CollectionPage = ({ hola, collection, match, location, history}) => {
 
     console.log("PSSSS");
     console.log(match);
     console.log(location);
     console.log(history);
+    console.log(hola);
     const {title, items} = collection;
 
     return(

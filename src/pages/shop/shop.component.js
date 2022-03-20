@@ -2,34 +2,35 @@ import React, {Component} from 'react';
 
 import {Route} from 'react-router-dom';
 import {connect} from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 
-import CollectionsOverview from '../../components/collections-overview/collections-overview.component';
-import CollectionPage from '../collection/collection.component';
+import CollectionsOverviewContainer from '../../components/collections-overview/collections-overview.container';
+import CollectionPageContainer from '../collection/collection.container';
 
-import {firestore, convertCollectionsSnapshotToMap} from '../../firebase/firebase.utils';
-import { updateCollections } from '../../redux/shop/shop.actions';
+// import { fetchCollectionsStartAsync } from '../../redux/shop/shop.actions';
+import { fecthCollectionsStart } from '../../redux/shop/shop.actions';
+import {selectIsCollectionFetching, selectIsCollectionLoaded} from '../../redux/shop/shop.selectors';
 
-import WithSpinner from '../../components/withSpinner/with-spinner.component';
 
-const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
-const CollectionPageWithSpinner = WithSpinner(CollectionPage);
+// const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
+// const CollectionPageWithSpinner = WithSpinner(CollectionPage);
 
 class ShopPage extends React.Component {
-    state = {
-        loading: true
-    }
-    unsubscribeFromSnapshot = null;
+    
 
     componentDidMount(){
-        const {updateCollections} = this.props;
-        const collectionRef = firestore.collection('collections');
         
-        collectionRef.get().then(snapshot => {
-            const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
-            console.log(collectionsMap);
-            updateCollections(collectionsMap);
-            this.setState({loading: false});
-        });
+        const {fetchCollectionStart} = this.props;
+        //Asynchronous Redux-Thunk method
+        fetchCollectionStart();
+
+        //This is an option using the collectionRef but promise based (This method has been applied with Redux-Thunk)
+        // collectionRef.get().then(snapshot => {
+        //     const collectionsMap = convertCollectionsSnapshotToMap(snapshot);
+        //     console.log(collectionsMap);
+        //     updateCollections(collectionsMap);
+        //     this.setState({loading: false});
+        // });
         
         // Fetching the firesotre of our databse
         // fetch('https://firestore.googleapis.com/v1/projects/foxy-db-87eba/databases/(default)/documents/collections')
@@ -49,19 +50,19 @@ class ShopPage extends React.Component {
 
     render(){
         const {match} = this.props;
-        const {loading} = this.state;
         
         return(
             <div className='shop-page'>
-                <Route exact path={`${match.path}`} render={(props) => <CollectionsOverviewWithSpinner isLoading={loading} {...props}/> }/>
-                <Route path={`${match.path}/:collection_id`} render={(props) => <CollectionPageWithSpinner isLoading={loading} {...props}/>} />
+                <Route exact path={`${match.path}`} component={CollectionsOverviewContainer}/>
+                <Route path={`${match.path}/:collection_id`} component={CollectionPageContainer} />
             </div>
         )
     }
 }
 
+
 const mapDispatchToProps = dispatch => ({
-    updateCollections:  collectionsMap => dispatch(updateCollections(collectionsMap))
+    fetchCollectionStart: () => dispatch(fecthCollectionsStart())
 });
 
 export default connect(null, mapDispatchToProps)(ShopPage);
